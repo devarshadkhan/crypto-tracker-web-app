@@ -1,0 +1,407 @@
+<!-- import React, { useEffect, useState } from "react";
+import { CoinList } from "../APIConfig/API";
+import InfiniteScroll from 'react-infinite-scroll-component';
+
+import axios from "axios";
+import {
+  Badge,
+  Box,
+  CardContent,
+  Container,
+  Grid,
+  Tooltip,
+  CircularProgress,
+  TextField,
+  MenuItem,
+  Select,
+  FormControl,
+  Pagination,
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import ReactPaginate from 'react-paginate';
+
+export function numberWithCommas(x) {
+  return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+const useStyles = makeStyles((theme) => ({
+  bag2: {
+    // border: "1px solid red",
+    padding: "1rem",
+    borderRadius: "15px",
+    margin: "1rem",
+  },
+  bag1: {
+    display: "flex",
+    alignItems: "center",
+    gap: "1rem",
+    "& img": {
+      marginLeft: "auto",
+    },
+    "& h3": {
+      fontSize: "10px",
+      fontWeight: "lighter",
+    },
+    "& h6": {
+      margin: "0",
+      fontSize: "1rem",
+      fontWeight: 700,
+    },
+    "& span": {
+      padding: "2px 5px",
+      borderRadius: "5px",
+      fontWeight: "bold",
+      textTransform: "uppercase",
+      fontSize: "12px",
+    },
+  },
+  card: {
+    padding: "0 !important",
+  },
+  bag3: {
+    "& ul": { padding: "0 !important" },
+    "& ul li": { listStyle: "none" },
+    "& ul li span": {
+      fontSize: "14px",
+    },
+  },
+  tooltip: {
+    // background: "#000",
+    color: "#fff",
+    borderRadius: 10,
+    borderRadius: 0,
+    fontWeight: "normal",
+    display: "flex",
+    alignItems: "center",
+    zIndex: 1,
+    padding: 10,
+    fontSize: "15px",
+    maxWidth: 350,
+  },
+}));
+const page_limit = 8
+// const pageno = 1
+const apipath = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${page_limit}&page=1&sparkline=false`
+const CryptoCard = () => {
+  const classes = useStyles();
+  const [coin, setCoin] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("");
+  const [pageNumber, setPageNumber] = useState(0);
+
+
+  // API Fetch
+
+  let pageno = Math.ceil(coin.length/page_limit) + 1;
+  const qp = "&per_page?" + pageno + "&page"+ page_limit
+  const pxc = apipath+ qp
+  const Fetch_Coin = async () => {
+    const Data = await axios.get(pxc);
+
+  
+    setCoin(Data.data);
+    setLoading(true);
+    clearTimeout(setSearch);
+    
+  };
+  const handleChange = (event,val) => {
+    console.log(val?.props.value);
+    setFilter(val?.props.value);
+  };
+  useEffect(() => {
+    setTimeout(() => {
+      Fetch_Coin();
+    },1000);
+  }, []);
+
+  const fet = () => {
+    Fetch_Coin();
+  }
+
+ // paginate
+  // const productPerPage = 8;
+  // const visitedPage = pageNumber * productPerPage;
+  // const cardCoin = coin.slice(
+  //   visitedPage,
+  //   visitedPage + productPerPage
+  // );
+ 
+  // const pageCount = Math.ceil(coin.length / productPerPage);
+  // const changePage = ({ selected }) => {
+  //   setPageNumber(selected);
+  // };
+
+ const filterOrSearchData=(filterKey,searchKey)=>{
+  return coin?.filter((value,index)=>{
+    return filterKey? value?.name.includes(filterKey)||filterKey==="All":value?.name.toLowerCase().includes(searchKey)
+  })
+ }
+
+
+ // infinite scroll
+
+ 
+
+
+
+ 
+ 
+
+
+
+// const filterOrSearchData=(filterKey,searchKey)=>{
+//   if(filterKey){
+//     return coin?.filter((value,index)=>{
+//       return value?.name.includes(filterKey)||filterKey==="All"
+//     })
+//   }else{
+//     return coin?.filter((value,index)=>{
+//       return value?.name.toLowerCase().includes(searchKey)
+//     })
+//   }
+//  }
+
+  // const searchCoin  = (text) => {
+  //   let match  = coin.filter((c) => {
+  //     const regex = new RegExp(`${text}`,"gi");
+  //     return c.name.match(regex) || c.symbol.match(regex)
+  //   })
+  //   setCoin(match)
+  // }
+  return (
+    <>
+      {!loading ? (
+        <>
+          {" "}
+          <Box sx={{ display:  "flex", justifyContent: "center" }}>
+            <CircularProgress />
+          </Box>
+        </>
+      ) : (
+        <Box>
+          <Box sx={{display: "flex", justifyContent: "space-between",alignItems:"center" }}>
+          <TextField
+            id="outlined-basic"
+            value={search}
+            fullWidth
+            placeholder="Search For a Crypto Currency.."
+            label="Search For a Crypto Currency.."
+            variant="outlined"
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+          />
+          <FormControl sx={{ m: 1, minWidth: 120 }}>
+            <Select
+              value={filter}
+              onChange={handleChange}
+              displayEmpty
+              inputProps={{ "aria-label": "Without label" }}
+            >
+             <MenuItem value={"All"}>
+                 All
+                </MenuItem>
+              {coin?.map((v,i) => (
+                <MenuItem key={i} value={v?.name} >
+                  {v?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          </Box>
+          <Container>
+            <Grid
+              container
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+              maxWidth="xl"
+            >
+            <InfiniteScroll 
+            style={{display:"flex",flexWrap:"wrap"}}
+              dataLength={coin.length} //This is important field to render the next data
+  next={fet}
+  hasMore={true}
+  loader={<h4>Loading...</h4>}
+  endMessage={
+    <p style={{ textAlign: 'center' }}>
+      <b>Yay! You have seen it all</b>
+    </p>
+  }
+  >
+              {
+                filterOrSearchData(filter,search)?.map((e,i) => {
+                  const profit = e?.price_change_percentage_24h > 0;
+                  return (
+                    <>
+                      <Grid key={i} item lg={3} md={6} sm={12}>
+                        <Box
+                          className={classes.bag2}
+                          style={{
+                            border: profit
+                              ? "1px solid green"
+                              : "1px solid red",
+                          }}
+                        >
+                          <CardContent className={classes.card}>
+                            <Box key={e.id} className={classes.bag1}>
+                              <h3>{e.market_cap_rank}</h3>
+                              <Tooltip
+                                title={e.name}
+                                arrow
+                                placement="top"
+                                classes={{
+                                  tooltip: classes.tooltip,
+                                  // arrow: classes.arrow
+                                }}
+                              >
+                                <h6>{`${e.name?.substring(0, 10)}`}</h6>
+                              </Tooltip>
+
+                              <span
+                                style={{
+                                  color: profit ? "green" : "red",
+                                  background: profit
+                                    ? "rgba(0, 255, 0,0.3)"
+                                    : "rgba(255, 0, 0,0.2)",
+                                }}
+                              >
+                                {e.symbol}
+                              </span>
+                              <img src={e.image} alt="" width="15%" />
+                            </Box>
+                            <Box className={classes.bag3}>
+                              <ul>
+                                <li>
+                                  <span>
+                                    Price $:{" "}
+                                    {numberWithCommas(
+                                      e.current_price.toFixed(2)
+                                    )}
+                                  </span>
+                                </li>
+                                <li>
+                                  <span>
+                                    1h:{" "}
+                                    <span
+                                      style={{
+                                        color: profit ? "green" : "red",
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      {profit && "+"}
+                                      {e.market_cap_change_percentage_24h?.toFixed(
+                                        2
+                                      )}
+                                      %{/* {e.price_change_24h}% */}
+                                    </span>
+                                  </span>
+                                </li>
+                                <li>
+                                  <p>
+                                    24h:{" "}
+                                    <span
+                                      style={{
+                                        color: profit ? "green" : "red",
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      {" "}
+                                      {profit && "+"}
+                                      {e.price_change_percentage_24h?.toFixed(
+                                        1
+                                      )}
+                                      %
+                                    </span>
+                                  </p>
+                                </li>
+                                <li>
+                                  <p>
+                                    7d:
+                                    <span
+                                      style={{
+                                        color: profit ? "green" : "red",
+                                        fontWeight: "bold",
+                                      }}
+                                      // >    {e.market_cap_change_percentage_24h?.toFixed(3)}%</span>
+                                    >
+                                      {" "}
+                                      {e.market_cap_change_percentage_24h}%
+                                    </span>
+                                  </p>
+                                </li>
+                                <li>
+                                  {/* <p>  <span>24h Volume: {e.market_cap_change_24h}</span></p> */}
+                                  <p>
+                                    {" "}
+                                    <span>
+                                      24h Volume:{" "}
+                                      {numberWithCommas(
+                                        e.total_volume?.toFixed(2)
+                                      )}
+                                    </span>
+                                  </p>
+                                </li>
+                                <li>
+                                  <span>
+                                    Mkt Cap: {profit}{" "}
+                                    {numberWithCommas(
+                                      e.market_cap.toString().slice(0, -6)
+                                    )}
+                                    M
+                                  </span>
+                                </li>
+                                <li>
+                                  <span>
+                                    Circulating Supply: {profit}{" "}
+                                    {numberWithCommas(
+                                      e.circulating_supply
+                                        .toString()
+                                        .slice(0, -6)
+                                    )}
+                                    M
+                                  </span>
+                                </li>
+                              </ul>
+                            </Box>
+                          </CardContent>
+                        </Box>
+                      </Grid>
+                    </>
+                  );
+                })}
+                 {/* <ReactPaginate
+                pageCount={pageCount}
+                onPageChange={changePage}
+                previousLabel={"Prev"}
+                nextLabel={"Next"}
+                containerClassName=" paginationBttns "
+              /> */}
+               {/* <Pagination
+              //  count={10}
+          count={(filterOrSearchData()?.length?.toFixed(0))}
+          // count={(filterOrSearchData()?.length / 8).toFixed(0)}
+          style={{
+            padding: 20,
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+          }}
+          // classes={{ ul: classes.pagination }}
+          onChange={(_, value) => {
+            setPageNumber(value);
+            window.scroll(0, 450);
+          }}
+        /> */}
+        </InfiniteScroll>
+            </Grid>
+          </Container>
+        </Box>
+      )}
+    </>
+  );
+};
+
+export default CryptoCard;
+
+//  {/* .filter((coin) => coin.name.toLowerCase().includes(search)) */} -->

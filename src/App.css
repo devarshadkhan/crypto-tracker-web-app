@@ -1,0 +1,77 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+p{
+    margin: 0;
+}
+.navbar-collapse{
+    flex-grow: 0 !important;
+}
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    margin: auto;
+    text-align: center;
+    font-family: arial;
+  }
+  
+  .price {
+    color: grey;
+    font-size: 22px;
+  }
+  
+  .card button {
+    border: none;
+    outline: 0;
+    padding: 12px;
+    color: white;
+    background-color: #000;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    font-size: 18px;
+  }
+  
+  .card button:hover {
+    opacity: 0.7;
+  }
+
+  .card-img-top{
+    width: 50% !important;
+    margin: 0 auto;
+    height: 150px;
+  }
+  .Toastify__toast{
+    box-shadow: none !important;
+  }
+  .paginationBttns {
+    width: 80%;
+    height: 40px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 0.5rem;
+    list-style: none;
+    margin-top: 30px;
+  }
+  
+  .paginationBttns a {
+    padding: 5px 13px;
+    background: #212245;
+    color: #fff !important;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 5px;
+  }
+  
+  .paginationBttns a:hover {
+    background: #df2020;
+  }
+  
